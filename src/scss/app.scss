@@ -33,6 +33,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+	  @media (width < 1280px) {
+		  flex-direction: column;
+		  row-gap: 20px;
+		  align-items: start;
+
+		  .sort {
+			  align-self: end
+		  }
+	  }
   }
 }
 
