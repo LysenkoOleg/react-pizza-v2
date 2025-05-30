@@ -1,4 +1,37 @@
+import React from 'react';
+
+
 const Sort = () => {
+	const sorts = [
+		'популярности',
+		'цене',
+		'алфавиту',
+	]
+	
+	const [isOpenPopup, setIsOpenPopup] = React.useState(false)
+	const [activeSort, setActiveSort] = React.useState(0)
+	
+	React.useEffect(() => {
+		const clickNonElement = (event) => {
+			const targetElement = document.querySelector('.sort__label span')
+			
+			if (event.target !== targetElement) {
+				setIsOpenPopup(false)
+			}
+		}
+		
+		document.addEventListener('click', clickNonElement)
+		
+		return () => {
+			document.removeEventListener('click', clickNonElement)
+		}
+	}, [])
+	
+	const changeActiveSortHandler = (activeIndex) => {
+		setActiveSort(activeIndex);
+		setIsOpenPopup(false);
+	}
+	
 	return (
 		<div className="sort">
 			<div className="sort__label">
@@ -15,15 +48,17 @@ const Sort = () => {
 					/>
 				</svg>
 				<b>Сортировка по:</b>
-				<span>популярности</span>
+				<span onClick={() => setIsOpenPopup(prev => !prev)}>{sorts[activeSort]}</span>
 			</div>
-			<div className="sort__popup">
-				<ul>
-					<li className="active">популярности</li>
-					<li>цене</li>
-					<li>алфавиту</li>
-				</ul>
-			</div>
+			{isOpenPopup && (
+				<div className="sort__popup">
+					<ul>
+						{sorts.map((sort, index) => (
+							<li key={sort} onClick={() => changeActiveSortHandler(index)} className={index === activeSort ? 'active': ''}>{sort}</li>
+						))}
+					</ul>
+				</div>
+			)}
 		</div>
 	)
 }

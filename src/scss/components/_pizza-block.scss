@@ -11,6 +11,11 @@
 
   &__image {
     width: 260px;
+	  transition: 0.4s;
+
+	  &:hover {
+		  transform: translateY(10px);
+	  }
   }
 
   &__title {

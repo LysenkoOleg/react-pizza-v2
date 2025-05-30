@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 const Categories = () => {
 	const categories = [
@@ -25,7 +25,7 @@ const Categories = () => {
 						key={index}
 						onClick={() => onClickHandler(index)}
 					>
-						{activeCount}
+						{category}
 					</li>
 					))}
 			</ul>
