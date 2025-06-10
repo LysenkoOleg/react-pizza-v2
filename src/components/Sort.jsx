@@ -1,15 +1,14 @@
 import React from 'react';
 
 
-const Sort = () => {
-	const sorts = [
-		'популярности',
-		'цене',
-		'алфавиту',
-	]
+const Sort = (props) => {
+	const {
+		activeSort,
+		setActiveSort,
+		sorts
+	} = props;
 	
 	const [isOpenPopup, setIsOpenPopup] = React.useState(false)
-	const [activeSort, setActiveSort] = React.useState(0)
 	
 	React.useEffect(() => {
 		const clickNonElement = (event) => {
@@ -34,7 +33,7 @@ const Sort = () => {
 	
 	return (
 		<div className="sort">
-			<div className="sort__label">
+			<div className={isOpenPopup ? 'sort__label active' : 'sort__label'}>
 				<svg
 					width="10"
 					height="6"
@@ -48,13 +47,13 @@ const Sort = () => {
 					/>
 				</svg>
 				<b>Сортировка по:</b>
-				<span onClick={() => setIsOpenPopup(prev => !prev)}>{sorts[activeSort]}</span>
+				<span onClick={() => setIsOpenPopup(prev => !prev)}>{sorts[activeSort].name}</span>
 			</div>
 			{isOpenPopup && (
 				<div className="sort__popup">
 					<ul>
-						{sorts.map((sort, index) => (
-							<li key={sort} onClick={() => changeActiveSortHandler(index)} className={index === activeSort ? 'active': ''}>{sort}</li>
+						{sorts.map(({ name, sort }, index) => (
+							<li key={index} onClick={() => changeActiveSortHandler(index)} className={index === activeSort ? 'active': ''}>{name}</li>
 						))}
 					</ul>
 				</div>
