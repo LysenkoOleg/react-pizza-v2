@@ -1,11 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import Categories from '../components/Categories';
 import Sort from '../components/Sort';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 import PizzaBlock from '../components/PizzaBlock';
+import Pagination from '../components/Pagination';
 
-const Home = () => {
+const Home = ({searchValue}) => {
 	const [pizzas, setPizzas] = React.useState([])
 	const [isLoading, setIsLoading] = React.useState(true)
 	
@@ -15,8 +16,6 @@ const Home = () => {
 		{name: 'цене', sort: 'price'},
 		{name: 'алфавиту', sort: 'title'},
 	], [])
-	
-	console.log(activeSort);
 	
 	const [activeCategories, setActiveCategories] = React.useState(0);
 	const categories = useMemo(() => [
@@ -28,15 +27,20 @@ const Home = () => {
 		'Закрытые'
 	], [])
 	
+	const [currentPage, setCurrentPage] = useState(1);
+	
 	React.useEffect(() => {
 		setIsLoading(true);
-		const url = new URL('https://683978406561b8d882b085c4.mockapi.io/items');
+		const url = new URL(`https://683978406561b8d882b085c4.mockapi.io/items?page=${currentPage}&limit=4`);
 		url.searchParams.append('sortBy', sorts[activeSort].sort)
 		url.searchParams.append('order', 'desc')
 		
 		if (activeCategories !== 0) {
-			console.log(activeCategories);
 			url.searchParams.append('category', activeCategories.toString())
+		}
+		
+		if (searchValue) {
+			url.searchParams.append('search', searchValue);
 		}
 		
 		fetch(url)
@@ -45,7 +49,7 @@ const Home = () => {
 			setIsLoading(false)
 		});
 		window.scrollTo(0, 0);
-	}, [activeSort, sorts, activeCategories, categories])
+	}, [activeSort, sorts, activeCategories, categories, searchValue, currentPage])
 	
 	return (
 		<>
@@ -69,6 +73,7 @@ const Home = () => {
 						: pizzas.map((obj) => <PizzaBlock key={obj.id} {...obj}/>)
 				}
 			</div>
+			<Pagination setCurrentPage={setCurrentPage}/>
 		</>
 	);
 };
