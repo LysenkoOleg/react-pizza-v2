@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useContext } from 'react';
+import React, { useMemo, useState, useContext, useEffect } from 'react';
 
 import Categories from '../components/Categories';
 import Sort from '../components/Sort';
@@ -6,21 +6,23 @@ import Skeleton from '../components/PizzaBlock/Skeleton';
 import PizzaBlock from '../components/PizzaBlock';
 import Pagination from '../components/Pagination';
 import { SearchContext } from '../App';
+import { useSelector, useDispatch } from 'react-redux';
+import { setCategoryId, setSortId } from '../redux/slices/filterSlice';
 
 const Home = () => {
 	const { searchValue } = useContext(SearchContext)
+	const { activeCategories, activeSort } = useSelector(state => state.filter);
+	const dispatch = useDispatch();
 	
 	const [pizzas, setPizzas] = React.useState([])
 	const [isLoading, setIsLoading] = React.useState(true)
 	
-	const [activeSort, setActiveSort] = React.useState(0)
 	const sorts = useMemo(() => [
 		{name: 'популярности', sort: 'rating'},
 		{name: 'цене', sort: 'price'},
 		{name: 'алфавиту', sort: 'title'},
 	], [])
 	
-	const [activeCategories, setActiveCategories] = React.useState(0);
 	const categories = useMemo(() => [
 		'Все',
 		'Мясные',
@@ -32,7 +34,15 @@ const Home = () => {
 	
 	const [currentPage, setCurrentPage] = useState(1);
 	
-	React.useEffect(() => {
+	const setActiveCategories = (id) => {
+		dispatch(setCategoryId(id))
+	}
+	
+	const setActiveSort = (id) => {
+		dispatch(setSortId(id))
+	}
+	
+	useEffect(() => {
 		setIsLoading(true);
 		const url = new URL(`https://683978406561b8d882b085c4.mockapi.io/items?page=${currentPage}&limit=4`);
 		url.searchParams.append('sortBy', sorts[activeSort].sort)
