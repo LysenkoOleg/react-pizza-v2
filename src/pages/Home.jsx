@@ -1,5 +1,6 @@
 import React, { useMemo, useContext, useEffect } from 'react';
 import axios from 'axios';
+import qs from 'qs'
 
 import Categories from '../components/Categories';
 import Sort from '../components/Sort';
@@ -8,12 +9,15 @@ import PizzaBlock from '../components/PizzaBlock';
 import Pagination from '../components/Pagination';
 import { SearchContext } from '../App';
 import { useSelector, useDispatch } from 'react-redux';
-import { setCategoryId, setSortId, setCurrentPage } from '../redux/slices/filterSlice';
+import { setCategoryId, setSortId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+	const navigate = useNavigate()
+	const dispatch = useDispatch();
+	
 	const { searchValue } = useContext(SearchContext)
 	const { activeCategories, activeSort, currentPage } = useSelector(state => state.filter);
-	const dispatch = useDispatch();
 	
 	const [pizzas, setPizzas] = React.useState([])
 	const [isLoading, setIsLoading] = React.useState(true)
@@ -46,6 +50,16 @@ const Home = () => {
 	}
 	
 	useEffect(() => {
+		if (window.location.search) {
+			const params = qs.parse(window.location.search.substring(1))
+			
+			dispatch(setFilters({
+				...params,
+			}))
+		}
+	}, [dispatch])
+	
+	useEffect(() => {
 		setIsLoading(true);
 		const url = new URL(`https://683978406561b8d882b085c4.mockapi.io/items?page=${currentPage}&limit=4`);
 		url.searchParams.append('sortBy', sorts[activeSort].sort)
@@ -71,6 +85,16 @@ const Home = () => {
 		window.scrollTo(0, 0);
 	}, [activeSort, sorts, activeCategories, categories, searchValue, currentPage])
 	
+	useEffect(() => {
+		const queryString = qs.stringify({
+			sort: activeSort,
+			category: activeCategories,
+			page: currentPage
+		})
+		
+		navigate(`?${queryString}`)
+	}, [activeSort, sorts, activeCategories, categories, searchValue, currentPage])
+	
 	return (
 		<>
 			<div className="content__top">
@@ -93,7 +117,7 @@ const Home = () => {
 						: pizzas.map((obj) => <PizzaBlock key={obj.id} {...obj}/>)
 				}
 			</div>
-			<Pagination setCurrentPage={setActivePage}/>
+			<Pagination value={currentPage} setCurrentPage={setActivePage}/>
 		</>
 	);
 };

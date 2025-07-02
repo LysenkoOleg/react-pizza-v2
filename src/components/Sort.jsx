@@ -1,14 +1,14 @@
 import React from 'react';
-
+import { useSelector } from 'react-redux';
 
 const Sort = (props) => {
 	const {
-		activeSort,
 		setActiveSort,
 		sorts
 	} = props;
 	
 	const [isOpenPopup, setIsOpenPopup] = React.useState(false)
+	const { activeSort } = useSelector(state => state.filter)
 	
 	React.useEffect(() => {
 		const clickNonElement = (event) => {
@@ -53,7 +53,7 @@ const Sort = (props) => {
 				<div className="sort__popup">
 					<ul>
 						{sorts.map(({ name, sort }, index) => (
-							<li key={index} onClick={() => changeActiveSortHandler(index)} className={index === activeSort ? 'active': ''}>{name}</li>
+							<li key={index} onClick={() => changeActiveSortHandler(index)} className={index === Number(activeSort) ? 'active': ''}>{name}</li>
 						))}
 					</ul>
 				</div>
