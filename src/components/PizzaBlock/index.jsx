@@ -7,8 +7,6 @@ const PizzaBlock = (props) => {
 		imageUrl,
 		types = [],
 		sizes = [],
-		category,
-		rating,
 	} = props;
 	
 	const translateTypes = [

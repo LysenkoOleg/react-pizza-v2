@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useContext, useEffect } from 'react';
+import axios from 'axios';
 
 import Categories from '../components/Categories';
 import Sort from '../components/Sort';
@@ -56,11 +57,15 @@ const Home = () => {
 			url.searchParams.append('search', searchValue);
 		}
 		
-		fetch(url)
-			.then(data => data.json()).then(json => {
-			setPizzas(json)
-			setIsLoading(false)
-		});
+		axios.get(url)
+			.then(response => {
+				setPizzas(response.data)
+				setIsLoading(false)
+			})
+			.catch(error => {
+				setPizzas([])
+				setIsLoading(false)
+			})
 		window.scrollTo(0, 0);
 	}, [activeSort, sorts, activeCategories, categories, searchValue, currentPage])
 	
