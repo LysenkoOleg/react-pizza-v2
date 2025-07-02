@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useContext, useEffect } from 'react';
+import React, { useMemo, useContext, useEffect } from 'react';
 import axios from 'axios';
 
 import Categories from '../components/Categories';
@@ -8,11 +8,11 @@ import PizzaBlock from '../components/PizzaBlock';
 import Pagination from '../components/Pagination';
 import { SearchContext } from '../App';
 import { useSelector, useDispatch } from 'react-redux';
-import { setCategoryId, setSortId } from '../redux/slices/filterSlice';
+import { setCategoryId, setSortId, setCurrentPage } from '../redux/slices/filterSlice';
 
 const Home = () => {
 	const { searchValue } = useContext(SearchContext)
-	const { activeCategories, activeSort } = useSelector(state => state.filter);
+	const { activeCategories, activeSort, currentPage } = useSelector(state => state.filter);
 	const dispatch = useDispatch();
 	
 	const [pizzas, setPizzas] = React.useState([])
@@ -33,14 +33,16 @@ const Home = () => {
 		'Закрытые'
 	], [])
 	
-	const [currentPage, setCurrentPage] = useState(1);
-	
 	const setActiveCategories = (id) => {
 		dispatch(setCategoryId(id))
 	}
 	
 	const setActiveSort = (id) => {
 		dispatch(setSortId(id))
+	}
+	
+	const setActivePage = (page) => {
+		dispatch(setCurrentPage(page))
 	}
 	
 	useEffect(() => {
@@ -91,7 +93,7 @@ const Home = () => {
 						: pizzas.map((obj) => <PizzaBlock key={obj.id} {...obj}/>)
 				}
 			</div>
-			<Pagination setCurrentPage={setCurrentPage}/>
+			<Pagination setCurrentPage={setActivePage}/>
 		</>
 	);
 };
